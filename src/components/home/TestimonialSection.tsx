@@ -6,7 +6,7 @@ const testimonials = [
     id: 1,
     name: 'James Wilson',
     title: 'Executive',
-    quote: 'The quality of LUXEMEN products is outstanding. I've been wearing their watches for years and they never disappoint.',
+    quote: "The quality of LUXEMEN products is outstanding. I've been wearing their watches for years and they never disappoint.",
     avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop'
   },
   {
