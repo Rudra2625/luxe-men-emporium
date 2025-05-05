@@ -32,9 +32,9 @@ const HeroSection = () => {
           <div className="hidden md:block">
             <div className="relative">
               <img 
-                src="https://images.unsplash.com/photo-1620688809357-0452955ed717?q=80&w=800&auto=format&fit=crop" 
+                src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=800&auto=format&fit=crop" 
                 alt="Premium Men's Accessories" 
-                className="rounded-lg shadow-2xl"
+                className="rounded-lg shadow-2xl object-cover h-[500px]"
               />
               <div className="absolute -bottom-6 -left-6 bg-luxe-gold text-luxe-navy p-4 rounded-lg shadow-lg">
                 <p className="font-serif text-lg">Premium Quality</p>
