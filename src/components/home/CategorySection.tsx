@@ -11,25 +11,25 @@ const categories = [
   },
   {
     name: 'Wallets',
-    image: 'https://images.unsplash.com/photo-1627123424574-724758594e93?q=80&w=800&auto=format&fit=crop',
+    image: 'https://i.pinimg.com/736x/25/0d/5c/250d5c1d4dd2c206036793d9fcb7e866.jpg',
     description: 'Handcrafted leather wallets combining style and functionality.',
     link: '/products?category=wallet'
   },
   {
     name: 'Watches',
-    image: 'https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?q=80&w=800&auto=format&fit=crop',
+    image: 'https://images.pexels.com/photos/190819/pexels-photo-190819.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
     description: 'Precision timepieces that make a statement.',
     link: '/products?category=watch'
   },
   {
     name: 'Belts',
-    image: 'https://images.unsplash.com/photo-1605348863400-c21ea557333e?q=80&w=800&auto=format&fit=crop',
+    image: 'https://i.pinimg.com/736x/38/57/fe/3857fe6d63de01642f88d7e8fa1b286d.jpg',
     description: 'Premium leather belts crafted for lasting elegance.',
     link: '/products?category=belt'
   },
   {
     name: 'Glasses',
-    image: 'https://images.unsplash.com/photo-1577803645773-f96470509666?q=80&w=800&auto=format&fit=crop',
+    image: 'https://i.pinimg.com/736x/4d/94/45/4d944572397d91ff23eb88f4d23ac962.jpg',
     description: 'Designer eyewear combining style and protection.',
     link: '/products?category=glasses'
   }
@@ -61,7 +61,7 @@ const CategorySection = () => {
                       <h3 className="font-serif text-2xl font-semibold mb-2">{category.name}</h3>
                       <p className="text-gray-200 mb-4 max-w-xs">{category.description}</p>
                       <span className="inline-block bg-luxe-gold text-luxe-navy px-4 py-2 rounded font-medium transition-colors">
-                        Shop Now
+                        Explore Now
                       </span>
                     </div>
                   </div>

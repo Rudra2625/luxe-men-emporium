@@ -12,6 +12,8 @@ export type Product = {
   bestSeller?: boolean;
 };
 
+
+
 export const products: Product[] = [
   {
     id: "perfume-1",
@@ -35,9 +37,9 @@ export const products: Product[] = [
   },
   {
     id: "perfume-3",
-    name: "Gentleman's Reserve",
+    name: "Patel's Neck Black ",
     price: 150.00,
-    image: "https://images.unsplash.com/photo-1619994103821-0d35a9d2a46b?q=80&w=800&auto=format&fit=crop",
+    image: "https://dms.mydukaan.io/original/jpeg/media/ab494b17-71f9-4b04-b4f1-207202e21422.jpg",
     category: "perfume",
     description: "A sophisticated blend of leather, tobacco, and vanilla, creating a timeless scent for the modern gentleman.",
     colors: ["Brown", "Gold"],
@@ -57,17 +59,38 @@ export const products: Product[] = [
     id: "wallet-2",
     name: "Carbon Fiber Minimalist",
     price: 65.00,
-    image: "https://images.unsplash.com/photo-1581516302996-87cf02a86322?q=80&w=800&auto=format&fit=crop",
+    image: "https://i.etsystatic.com/7832984/r/il/9913d4/656265776/il_fullxfull.656265776_7i5s.jpg",
     category: "wallet",
     description: "Sleek and modern carbon fiber wallet with a slim profile, perfect for the minimalist who appreciates cutting-edge design and functionality.",
     colors: ["Carbon", "Silver"],
     new: true
   },
   {
+    id: "wallet-3",
+    name: "Bifold Leather Wallet",
+    price: 45.00,
+    image: "https://redtape.com/cdn/shop/files/4_e6d21443-b497-410b-8d67-b6052298b4b0.jpg?v=1741417414",
+    category: "wallet",
+    description: "Keep your essentials organized and secure with our Bifold Leather Wallet. With 6 card slots, 2 secret pockets and 2 currency compartments, this wallet offers ample space for your essentials..",
+    colors: ["Black Grey", "Navy"],
+    bestSeller: true
+  },
+  {
+    id: "wallet-4",
+    name: "Soild Leather Wallet",
+    price: 45.00,
+    image: "https://i.pinimg.com/736x/06/41/c6/0641c6ea298ed2e293d2f60bb2bb93b4.jpg",
+    category: "wallet",
+    description: "Keep your essentials organized and secure with our Solid Leather Wallet. With 6 card slots, 2 secret pockets and 2 currency compartments, this wallet offers ample space for your essentials..",
+    colors: ["Black Grey", "Navy"],
+    
+  },
+  
+  {
     id: "belt-1",
     name: "Classic Reversible Belt",
     price: 75.00,
-    image: "https://images.unsplash.com/photo-1605348863400-c21ea557333e?q=80&w=800&auto=format&fit=crop",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8iTx9OPs9QSMgMOupZmF26c-rurCY-itenQ&s",
     category: "belt",
     description: "A versatile reversible leather belt with a rotating buckle that offers two classic colors in one elegant accessory.",
     colors: ["Black/Brown", "Navy/Tan"],
@@ -77,7 +100,7 @@ export const products: Product[] = [
     id: "belt-2",
     name: "Designer Buckle Belt",
     price: 120.00,
-    image: "https://images.unsplash.com/photo-1619624653777-483d1a917b75?q=80&w=800&auto=format&fit=crop",
+    image: "https://img.joomcdn.net/a0cb209a506f2bbf40d41651c92779770bb5c479_original.jpeg",
     category: "belt",
     description: "Premium leather belt featuring our signature designer buckle, handcrafted for exceptional style and durability.",
     colors: ["Black", "Brown"],
@@ -104,6 +127,7 @@ export const products: Product[] = [
     colors: ["Blue", "Black"],
     new: true
   },
+    
   {
     id: "glasses-1",
     name: "Aviator Premium",

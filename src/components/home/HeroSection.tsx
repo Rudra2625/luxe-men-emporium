@@ -32,7 +32,7 @@ const HeroSection = () => {
           <div className="hidden md:block">
             <div className="relative">
               <img 
-                src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?q=80&w=800&auto=format&fit=crop" 
+                src="https://img.freepik.com/free-photo/composition-fathers-day-with-accessories_23-2147790930.jpg?semt=ais_hybrid&w=740" 
                 alt="Premium Men's Accessories" 
                 className="rounded-lg shadow-2xl object-cover h-[500px] w-full"
               />

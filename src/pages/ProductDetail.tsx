@@ -13,14 +13,14 @@ const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { addToCart } = useCart();
-  
+
   const product = products.find(p => p.id === id);
-  
+
   const [selectedColor, setSelectedColor] = useState(
     product?.colors ? product.colors[0] : undefined
   );
   const [quantity, setQuantity] = useState(1);
-  
+
   if (!product) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -38,7 +38,7 @@ const ProductDetail = () => {
       </div>
     );
   }
-  
+
   const handleAddToCart = () => {
     addToCart({
       id: product.id,
@@ -49,11 +49,11 @@ const ProductDetail = () => {
       color: selectedColor
     }, quantity);
   };
-  
+
   const handleQuantityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setQuantity(parseInt(e.target.value));
   };
-  
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -62,9 +62,9 @@ const ProductDetail = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             {/* Product Image */}
             <div className="relative">
-              <img 
-                src={product.image} 
-                alt={product.name} 
+              <img
+                src={product.image}
+                alt={product.name}
                 className="w-full h-auto rounded-lg shadow-lg"
               />
               {/* Badges */}
@@ -77,7 +77,7 @@ const ProductDetail = () => {
                 )}
               </div>
             </div>
-            
+
             {/* Product Details */}
             <div>
               <div className="mb-6">
@@ -85,15 +85,21 @@ const ProductDetail = () => {
                   {product.category}
                 </p>
                 <h1 className="font-serif text-3xl font-bold text-luxe-navy mb-2">{product.name}</h1>
-                <p className="text-2xl font-semibold">${product.price.toFixed(2)}</p>
+                <p className="text-2xl font-semibold">
+                  {new Intl.NumberFormat("en-IN", {
+                    style: "currency",
+                    currency: "INR",
+                  }).format(product.price)}
+                </p>
+
               </div>
-              
+
               {/* Product Description */}
               <div className="mb-6">
                 <h3 className="font-serif text-xl font-semibold mb-2">Description</h3>
                 <p className="text-gray-700">{product.description}</p>
               </div>
-              
+
               {/* Color Selection */}
               {product.colors && (
                 <div className="mb-6">
@@ -102,11 +108,10 @@ const ProductDetail = () => {
                     {product.colors.map(color => (
                       <button
                         key={color}
-                        className={`p-4 border rounded-md ${
-                          selectedColor === color 
-                            ? 'border-luxe-gold bg-gray-50' 
+                        className={`p-4 border rounded-md ${selectedColor === color
+                            ? 'border-luxe-gold bg-gray-50'
                             : 'border-gray-200 hover:border-gray-300'
-                        }`}
+                          }`}
                         onClick={() => setSelectedColor(color)}
                       >
                         {color}
@@ -115,11 +120,11 @@ const ProductDetail = () => {
                   </div>
                 </div>
               )}
-              
+
               {/* Quantity Selection */}
               <div className="mb-8">
                 <h3 className="font-serif text-xl font-semibold mb-2">Quantity</h3>
-                <select 
+                <select
                   value={quantity}
                   onChange={handleQuantityChange}
                   className="w-24 p-2 border border-gray-300 rounded-md"
@@ -129,10 +134,10 @@ const ProductDetail = () => {
                   ))}
                 </select>
               </div>
-              
+
               {/* Add to Cart Button */}
-              <Button 
-                onClick={handleAddToCart} 
+              <Button
+                onClick={handleAddToCart}
                 className="w-full sm:w-auto px-8 py-6 bg-luxe-navy text-white hover:bg-luxe-navy/90 transition-colors"
               >
                 <ShoppingBag className="mr-2 h-5 w-5" /> Add to Cart

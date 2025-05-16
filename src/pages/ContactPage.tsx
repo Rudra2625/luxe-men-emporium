@@ -72,9 +72,9 @@ const ContactPage = () => {
                     <div>
                       <h3 className="font-semibold mb-1">Visit Us</h3>
                       <p className="text-gray-600">
-                        123 Luxury Avenue<br />
-                        Beverly Hills, CA 90210<br />
-                        United States
+                      4 - Avani Square, Manohar Villa<br />
+                      New Naroda, Ahmedabad<br />
+                      Gujarat, India - 382345
                       </p>
                     </div>
                   </div>
@@ -97,8 +97,8 @@ const ContactPage = () => {
                     <div>
                       <h3 className="font-semibold mb-1">Call Us</h3>
                       <p className="text-gray-600">
-                        Toll-Free: +1 (800) 123-4567<br />
-                        International: +1 (555) 987-6543
+                      +91 97919 87738<br/>
+                      +91 97726 63214
                       </p>
                     </div>
                   </div>
@@ -216,10 +216,13 @@ const ContactPage = () => {
           <div className="container mx-auto px-4">
             <h2 className="font-serif text-2xl font-bold mb-6 text-luxe-navy">Our Location</h2>
             <div className="h-96 bg-gray-200 rounded-lg overflow-hidden">
-              {/* You would integrate a real map here, but for this example we'll use a placeholder */}
-              <div className="w-full h-full flex items-center justify-center bg-gray-300">
-                <p className="text-gray-600">Interactive Map Would Be Displayed Here</p>
-              </div>
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3670.9883847152223!2d72.6614417745563!3d23.060887414898676!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395e87fe2e388bff%3A0x7deafabc796e7326!2sBrahmani%20Mobile%20%26%20Belts!5e0!3m2!1sen!2sin!4v1746517045216!5m2!1sen!2sin"
+              className="w-full h-full border-0"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            ></iframe>
+              
             </div>
           </div>
         </section>
