@@ -22,7 +22,7 @@ const HeroSection = () => {
                   Shop Collection <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
-              <Button asChild variant="outline" className="border-white text-white hover:bg-white/10 px-8 py-6">
+              <Button asChild variant="outline" className="border-white text-fuchsia-200 hover:bg-white/10 px-8 py-6">
                 <Link to="/about">
                   About Us
                 </Link>
@@ -32,7 +32,7 @@ const HeroSection = () => {
           <div className="hidden md:block">
             <div className="relative">
               <img 
-                src="https://img.freepik.com/free-photo/composition-fathers-day-with-accessories_23-2147790930.jpg?semt=ais_hybrid&w=740" 
+                src="https://i.pinimg.com/736x/35/d6/aa/35d6aa22cd06f5ef95dbc5a89ae86a18.jpg" 
                 alt="Premium Men's Accessories" 
                 className="rounded-lg shadow-2xl object-cover h-[500px] w-full"
               />

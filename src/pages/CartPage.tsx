@@ -18,9 +18,10 @@ const CartPage = () => {
       description: "Thank you for your order! We'll email you the confirmation shortly.",
     });
     clearCart();
-    navigate('/');
+    navigate('/checkout');
   };
 
+  
   if (items.length === 0) {
     return (
       <div className="min-h-screen flex flex-col">
