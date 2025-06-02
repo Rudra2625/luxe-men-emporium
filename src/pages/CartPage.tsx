@@ -96,7 +96,7 @@ const CartPage = () => {
                       {/* Remove Button */}
                        <button
                         onClick={() => {
-                          clearCart();
+                          removeFromCart(item.id);
                           toast(`${item.name} removed from cart.`);
                         }}
                         className="text-gray-500 hover:text-red-500 ml-4 focus:outline-none"

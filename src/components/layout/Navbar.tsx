@@ -1,17 +1,28 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingCart, Search, Menu, X } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
+import { useSelector } from 'react-redux'; // Redux
+import { selectCurrentUser } from '../redux/authSelector'; // Your selector
 
-const Navbar = () => {
+const Navbar = () => {  
   const { totalItems } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  const [user, setUser] = useState<{ fullname: string } | null>(null);
-  useEffect(() => { })
+  const authUser = useSelector( selectCurrentUser); // From Redux
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    if (authUser) {
+      setUser(authUser);
+    } else {
+      // Fallback if user is stored in localStorage
+      const localUser = JSON.parse(localStorage.getItem('user'));
+      setUser(localUser);
+    }
+  }, [authUser]);
 
   return (
     <nav className="bg-white shadow-md">
@@ -20,7 +31,9 @@ const Navbar = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <img src="/logo.png" alt="Brahmani Luxe Logo" className="h-8 w-8" />
-            <h1 className="text-2xl font-serif font-bold text-luxe-navy">Brahmani <span className="text-luxe-gold">Luxe</span></h1>
+            <h1 className="text-2xl font-serif font-bold text-luxe-navy">
+              Brahmani <span className="text-luxe-gold">Luxe</span>
+            </h1>
           </Link>
 
           {/* Desktop Navigation */}
@@ -45,17 +58,19 @@ const Navbar = () => {
                 </span>
               )}
             </Link>
-            {/* User Login/Signup */}
+
+            {/* Conditional User Display */}
             {user ? (
               <Link to="/dashboard" className="text-luxe-navy hover:text-luxe-gold font-medium">
-                Login as {user.fullname.charAt(0).toUpperCase()}
+                {user.fullname.split(' ')[0]}
               </Link>
             ) : (
-              <Link to="/signup" className="text-luxe-navy hover:text-luxe-gold font-medium">
-                Signup
-              </Link>
+              <>
+                <Link to="/login" className="text-luxe-navy hover:text-luxe-gold font-medium">Login</Link>
+                <Link to="/signup" className="text-luxe-navy hover:text-luxe-gold font-medium">Signup</Link>
+              </>
             )}
-            
+
             <button onClick={toggleMenu} className="md:hidden text-luxe-navy">
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -68,34 +83,10 @@ const Navbar = () => {
         <div className="md:hidden bg-white border-t border-gray-100 animate-fade-in">
           <div className="container mx-auto px-4 py-2">
             <div className="flex flex-col space-y-3 py-4">
-              <Link
-                to="/"
-                className="text-luxe-navy hover:text-luxe-gold transition-colors py-2"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Home
-              </Link>
-              <Link
-                to="/products"
-                className="text-luxe-navy hover:text-luxe-gold transition-colors py-2"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Products
-              </Link>
-              <Link
-                to="/about"
-                className="text-luxe-navy hover:text-luxe-gold transition-colors py-2"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                About Us
-              </Link>
-              <Link
-                to="/contact"
-                className="text-luxe-navy hover:text-luxe-gold transition-colors py-2"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Contact
-              </Link>
+              <Link to="/" onClick={() => setIsMenuOpen(false)} className="text-luxe-navy hover:text-luxe-gold transition-colors py-2">Home</Link>
+              <Link to="/products" onClick={() => setIsMenuOpen(false)} className="text-luxe-navy hover:text-luxe-gold transition-colors py-2">Products</Link>
+              <Link to="/about" onClick={() => setIsMenuOpen(false)} className="text-luxe-navy hover:text-luxe-gold transition-colors py-2">About Us</Link>
+              <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="text-luxe-navy hover:text-luxe-gold transition-colors py-2">Contact</Link>
             </div>
           </div>
         </div>

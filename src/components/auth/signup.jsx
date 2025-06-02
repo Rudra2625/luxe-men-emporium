@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { USER_API_END_POINT } from '../utils/constant';
 
 const Signup = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({
     fullname: '',
     email: '',
+    phonenumber: '',
     password: '',
     confirmPassword: ''
   });
@@ -14,16 +17,35 @@ const Signup = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add validation & backend call here
+
     if (form.password !== form.confirmPassword) {
       alert("Passwords do not match.");
       return;
     }
-    // Simulate success
-    alert("Registered successfully!");
-    navigate('/login');
+
+    try {
+      const res = await axios.post(`${USER_API_END_POINT}/register`, {
+        fullname: form.fullname,
+        email: form.email,
+        phonenumber: form.phonenumber,
+        password: form.password,
+      });
+
+      if (res.data.success) {
+        alert("Registered successfully!");
+        navigate('/login');
+      } else {
+        alert(res.data.message || "Registration failed.");
+      }
+
+    } catch (error) {
+      console.error("Signup error:", error.response?.data || error.message);
+      alert("Error during signup: " + (error.response?.data?.message || error.message));
+    } finally {
+      
+    }
   };
 
   return (
@@ -41,7 +63,18 @@ const Signup = () => {
               value={form.fullname}
               onChange={handleChange}
               required
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-luxe-gold transition"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1"
+            />
+          </div>
+          <div>
+            <label className="block text-luxe-navy font-medium">Phone Number</label>
+            <input
+              type="tel"
+              name="phonenumber"
+              value={form.phonenumber}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1"
             />
           </div>
           <div>
@@ -52,7 +85,7 @@ const Signup = () => {
               value={form.email}
               onChange={handleChange}
               required
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-luxe-gold transition"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1"
             />
           </div>
           <div>
@@ -63,7 +96,7 @@ const Signup = () => {
               value={form.password}
               onChange={handleChange}
               required
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-luxe-gold transition"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1"
             />
           </div>
           <div>
@@ -74,7 +107,7 @@ const Signup = () => {
               value={form.confirmPassword}
               onChange={handleChange}
               required
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-luxe-gold transition"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1"
             />
           </div>
           <button

@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 type CartItem = {
@@ -25,7 +24,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
-  
+
   // Load cart from localStorage on initial render
   useEffect(() => {
     const savedCart = localStorage.getItem('luxe-cart');
@@ -37,51 +36,61 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
     }
   }, []);
-  
+
   // Save cart to localStorage when it changes
   useEffect(() => {
     localStorage.setItem('luxe-cart', JSON.stringify(items));
   }, [items]);
-  
+
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
-  
   const totalPrice = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  
+
   const addToCart = (item: Omit<CartItem, 'quantity'>, quantity = 1) => {
     setItems(currentItems => {
       const existingItem = currentItems.find(i => i.id === item.id);
       if (existingItem) {
-        return currentItems.map(i => 
+        return currentItems.map(i =>
           i.id === item.id ? { ...i, quantity: i.quantity + quantity } : i
         );
       }
       return [...currentItems, { ...item, quantity }];
     });
   };
-  
+
   const removeFromCart = (id: string) => {
-    setItems(currentItems => currentItems.filter(item => item.id !== id));
+    if (!id) {
+      console.warn("removeFromCart called with invalid ID:", id);
+      return;
+    }
+
+    setItems(currentItems => {
+      const updatedItems = currentItems.filter(item => item.id !== id);
+      console.log("Removing item with ID:", id);
+      console.log("Cart before removal:", currentItems);
+      console.log("Cart after removal:", updatedItems);
+      return updatedItems;
+    });
   };
-  
+
   const updateQuantity = (id: string, quantity: number) => {
     if (quantity < 1) return;
-    setItems(currentItems => 
-      currentItems.map(item => 
+    setItems(currentItems =>
+      currentItems.map(item =>
         item.id === id ? { ...item, quantity } : item
       )
     );
   };
-  
+
   const clearCart = () => {
     setItems([]);
   };
-  
+
   return (
-    <CartContext.Provider value={{ 
-      items, 
-      addToCart, 
-      removeFromCart, 
-      clearCart, 
+    <CartContext.Provider value={{
+      items,
+      addToCart,
+      removeFromCart,
+      clearCart,
       updateQuantity,
       totalItems,
       totalPrice
