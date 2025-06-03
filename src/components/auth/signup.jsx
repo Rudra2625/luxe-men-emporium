@@ -1,10 +1,16 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { USER_API_END_POINT } from '../utils/constant';
+import { useDispatch, useSelector } from 'react-redux';
+import { registerUser, clearError } from '../redux/slices/authSlice';
+import { selectAuthLoading, selectAuthError } from '../redux/authSelector';
 
 const Signup = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const loading = useSelector(selectAuthLoading);
+  const error = useSelector(selectAuthError);
+
   const [form, setForm] = useState({
     fullname: '',
     email: '',
@@ -19,6 +25,7 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    dispatch(clearError());
 
     if (form.password !== form.confirmPassword) {
       alert("Passwords do not match.");
@@ -26,25 +33,17 @@ const Signup = () => {
     }
 
     try {
-      const res = await axios.post(`${USER_API_END_POINT}/register`, {
+      const result = await dispatch(registerUser({
         fullname: form.fullname,
         email: form.email,
         phonenumber: form.phonenumber,
         password: form.password,
-      });
+      })).unwrap();
 
-      if (res.data.success) {
-        alert("Registered successfully!");
-        navigate('/login');
-      } else {
-        alert(res.data.message || "Registration failed.");
-      }
-
+      console.log('Registration success:', result);
+      navigate('/');
     } catch (error) {
-      console.error("Signup error:", error.response?.data || error.message);
-      alert("Error during signup: " + (error.response?.data?.message || error.message));
-    } finally {
-      
+      console.error("Signup error:", error);
     }
   };
 
@@ -54,6 +53,13 @@ const Signup = () => {
         <h2 className="text-3xl font-serif font-bold text-center text-luxe-navy mb-6">
           Create <span className="text-luxe-gold">Account</span>
         </h2>
+
+        {error && (
+          <div className="text-red-600 text-sm mb-4 text-center">
+            {error}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-luxe-navy font-medium">Full Name</label>
@@ -112,9 +118,10 @@ const Signup = () => {
           </div>
           <button
             type="submit"
-            className="w-full bg-luxe-navy text-white font-semibold py-2 rounded-lg hover:bg-luxe-gold hover:text-luxe-navy transition duration-300"
+            disabled={loading}
+            className="w-full bg-luxe-navy text-white font-semibold py-2 rounded-lg hover:bg-luxe-gold hover:text-luxe-navy transition duration-300 disabled:opacity-50"
           >
-            Sign Up
+            {loading ? 'Creating Account...' : 'Sign Up'}
           </button>
         </form>
         <p className="text-sm text-center text-luxe-navy mt-4">

@@ -1,19 +1,20 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { useDispatch } from 'react-redux';
-import { setUser } from '../redux/authslice'
-import { USER_API_END_POINT } from '../utils/constant';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginUser, clearError } from '../redux/slices/authSlice';
+import { selectAuthLoading, selectAuthError } from '../redux/authSelector';
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const loading = useSelector(selectAuthLoading);
+  const error = useSelector(selectAuthError);
 
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
-  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -24,19 +25,14 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    dispatch(clearError());
 
     try {
-      // ✅ Send form data to the backend
-      const res = await axios.post(`${USER_API_END_POINT}login`, formData);
-      console.log('Login success:', res.data);
-      localStorage.setItem('token', res.data.token);
-      dispatch(setUser(res.data.user));
-      // Redirect on success
+      const result = await dispatch(loginUser(formData)).unwrap();
+      console.log('Login success:', result);
       navigate('/');
     } catch (error) {
-      console.error('Login failed:', error.response?.data?.message || error.message);
-      setError(error.response?.data?.message || 'Login failed. Please try again.');
+      console.error('Login failed:', error);
     }
   };
 
@@ -78,14 +74,15 @@ const Login = () => {
 
           <button
             type="submit"
-            className="w-full py-2 bg-luxe-gold text-white font-semibold rounded-xl mt-4 hover:bg-yellow-600 transition-all duration-300"
+            disabled={loading}
+            className="w-full py-2 bg-luxe-gold text-white font-semibold rounded-xl mt-4 hover:bg-yellow-600 transition-all duration-300 disabled:opacity-50"
           >
-            Log In
+            {loading ? 'Logging in...' : 'Log In'}
           </button>
         </form>
 
         <p className="mt-6 text-center text-sm text-gray-600">
-          Don’t have an account?{' '}
+          Don't have an account?{' '}
           <Link to="/signup" className="text-luxe-gold font-medium hover:underline">
             Sign Up
           </Link>
@@ -96,4 +93,3 @@ const Login = () => {
 };
 
 export default Login;
-  

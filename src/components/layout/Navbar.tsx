@@ -1,17 +1,21 @@
+
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { ShoppingCart, Search, Menu, X } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ShoppingCart, Search, Menu, X, LogOut } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
-import { useSelector } from 'react-redux'; // Redux
-import { selectCurrentUser } from '../redux/authSelector'; // Your selector
+import { useSelector, useDispatch } from 'react-redux';
+import { selectCurrentUser } from '../redux/authSelector';
+import { logout } from '../redux/slices/authSlice';
 
 const Navbar = () => {  
   const { totalItems } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  const authUser = useSelector( selectCurrentUser); // From Redux
+  const authUser = useSelector(selectCurrentUser);
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -19,10 +23,16 @@ const Navbar = () => {
       setUser(authUser);
     } else {
       // Fallback if user is stored in localStorage
-      const localUser = JSON.parse(localStorage.getItem('user'));
+      const localUser = JSON.parse(localStorage.getItem('user') || 'null');
       setUser(localUser);
     }
   }, [authUser]);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    setUser(null);
+    navigate('/');
+  };
 
   return (
     <nav className="bg-white shadow-md">
@@ -61,9 +71,18 @@ const Navbar = () => {
 
             {/* Conditional User Display */}
             {user ? (
-              <Link to="/dashboard" className="text-luxe-navy hover:text-luxe-gold font-medium">
-                {user.fullname.split(' ')[0]}
-              </Link>
+              <div className="flex items-center space-x-3">
+                <Link to="/dashboard" className="text-luxe-navy hover:text-luxe-gold font-medium">
+                  {user.fullname.split(' ')[0]}
+                </Link>
+                <button 
+                  onClick={handleLogout}
+                  className="text-luxe-navy hover:text-luxe-gold transition-colors"
+                  title="Logout"
+                >
+                  <LogOut size={18} />
+                </button>
+              </div>
             ) : (
               <>
                 <Link to="/login" className="text-luxe-navy hover:text-luxe-gold font-medium">Login</Link>
@@ -87,6 +106,17 @@ const Navbar = () => {
               <Link to="/products" onClick={() => setIsMenuOpen(false)} className="text-luxe-navy hover:text-luxe-gold transition-colors py-2">Products</Link>
               <Link to="/about" onClick={() => setIsMenuOpen(false)} className="text-luxe-navy hover:text-luxe-gold transition-colors py-2">About Us</Link>
               <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="text-luxe-navy hover:text-luxe-gold transition-colors py-2">Contact</Link>
+              {user && (
+                <button 
+                  onClick={() => {
+                    handleLogout();
+                    setIsMenuOpen(false);
+                  }}
+                  className="text-luxe-navy hover:text-luxe-gold transition-colors py-2 text-left"
+                >
+                  Logout
+                </button>
+              )}
             </div>
           </div>
         </div>
