@@ -1,13 +1,22 @@
-// components/redux/store.ts
+
 import { configureStore } from '@reduxjs/toolkit';
-import authReducer from './authslice'; // adjust the path if needed
+import authReducer from './slices/authSlice';
+import productReducer from './slices/productSlice';
+import orderReducer from './slices/orderSlice';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
+    products: productReducer,
+    orders: orderReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: ['persist/PERSIST'],
+      },
+    }),
 });
 
-// ✅ Type helpers
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
