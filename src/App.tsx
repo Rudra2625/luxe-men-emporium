@@ -14,6 +14,7 @@ import ContactPage from "./pages/ContactPage";
 import NotFound from "./pages/NotFound";
 import AddressPage from "./pages/AddressPage";
 import PaymentPage from "./pages/PayemtPage";
+import AdminPage from "./pages/AdminPage";
 import Signup from "./components/auth/signup";
 import Login from "./components/auth/login";
 
@@ -32,12 +33,11 @@ const App = () => (
             <Route path="/products" element={<ProductsPage />} />
             <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/cart" element={<CartPage />} />
-            <Route path="/" element={<AddressPage />} />
             <Route path="/checkout" element={<AddressPage />} />
             <Route path="/payment" element={<PaymentPage />} />
+            <Route path="/admin" element={<AdminPage />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/login" element={<Login/>} />
-            {/* Add more routes as needed */}
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="*" element={<NotFound />} />
