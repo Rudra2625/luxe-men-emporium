@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../redux/store';
-import { fetchProducts } from '../redux/slices/productSlice';
+import { fetchProducts } from '../redux/thunks/productThunks';
 import { Package, Plus, Edit, Trash2, Eye, Settings } from 'lucide-react';
 import AdminOrderManagement from './AdminOrderManagement';
 import AdminProductManagement from './AdminProductManagement';

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../redux/store';
-import { fetchProducts } from '../redux/slices/productSlice';
+import { fetchProducts } from '../redux/thunks/productThunks';
 import { Plus, Edit, Trash2, Eye } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
 import ProductForm from './ProductForm';

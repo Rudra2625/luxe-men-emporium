@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchProducts } from '../redux/slices/productSlice';
+import { fetchProducts } from '../redux/thunks/productThunks';
 import { RootState, AppDispatch } from '../redux/store';
 
 const ProductsList = () => {
