@@ -1,154 +1,185 @@
-
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import Navbar from '../components/layout/Navbar';
-import Footer from '../components/layout/Footer';
-import { products } from '../data/products';
-import { useCart } from '../context/CartContext';
-import { Badge } from '@/components/ui/badge';
+import { productAPI } from '../services/api';
 import { Button } from '@/components/ui/button';
-import { ShoppingBag } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
+import { Card } from '@/components/ui/card';
+import { useCart } from '../context/CartContext';
+
+interface Product {
+    _id: string;
+    name: string;
+    price: number;
+    description: string;
+    images: Array<{ url: string }>;
+    category: string;
+    stock: number;
+    ratings: number;
+    numOfReviews: number;
+    reviews: Array<{
+        user: string;
+        name: string;
+        rating: number;
+        comment: string;
+    }>;
+}
 
 const ProductDetail = () => {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  const { addToCart } = useCart();
+    const { id } = useParams<{ id: string }>();
+    const [product, setProduct] = useState<Product | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [quantity, setQuantity] = useState(1);
+    const navigate = useNavigate();
+    const { toast } = useToast();
+    const { addToCart } = useCart();
 
-  const product = products.find(p => p.id === id);
+    useEffect(() => {
+        fetchProduct();
+    }, [id]);
 
-  const [selectedColor, setSelectedColor] = useState(
-    product?.colors ? product.colors[0] : undefined
-  );
-  const [quantity, setQuantity] = useState(1);
+    const fetchProduct = async () => {
+        try {
+            if (!id) return;
+            const data = await productAPI.getProduct(id);
+            setProduct(data.product);
+        } catch (error: any) {
+            toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: error.response?.data?.message || 'Failed to fetch product details',
+            });
+            navigate('/products');
+        } finally {
+            setLoading(false);
+        }
+    };
 
-  if (!product) {
+    const handleQuantityChange = (value: number) => {
+        if (product && value >= 1 && value <= product.stock) {
+            setQuantity(value);
+        }
+    };
+
+    const handleAddToCart = () => {
+        if (product) {
+            addToCart({
+                id: product._id,
+                name: product.name,
+                price: product.price,
+                image: product.images[0]?.url || '/placeholder.png',
+                quantity,
+                stock: product.stock,
+            });
+            toast({
+                title: 'Success',
+                description: 'Product added to cart',
+            });
+        }
+    };
+
+    if (loading) {
+        return <div className="container mx-auto px-4 py-8 text-center">Loading...</div>;
+    }
+
+    if (!product) {
+        return <div className="container mx-auto px-4 py-8 text-center">Product not found</div>;
+    }
+
     return (
-      <div className="min-h-screen flex flex-col">
-        <Navbar />
-        <main className="flex-grow flex items-center justify-center">
-          <div className="text-center">
-            <h2 className="text-2xl font-serif font-bold mb-4">Product Not Found</h2>
-            <p className="mb-6">Sorry, the product you are looking for does not exist.</p>
-            <Button onClick={() => navigate('/products')}>
-              Back to Products
-            </Button>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
-  const handleAddToCart = () => {
-    addToCart({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      image: product.image,
-      category: product.category,
-      color: selectedColor
-    }, quantity);
-  };
-
-  const handleQuantityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setQuantity(parseInt(e.target.value));
-  };
-
-  return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      <main className="flex-grow py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            {/* Product Image */}
-            <div className="relative">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-auto rounded-lg shadow-lg"
-              />
-              {/* Badges */}
-              <div className="absolute top-4 left-4 flex flex-col gap-2">
-                {product.new && (
-                  <Badge className="bg-luxe-burgundy">New</Badge>
-                )}
-                {product.bestSeller && (
-                  <Badge className="bg-luxe-gold text-luxe-navy">Best Seller</Badge>
-                )}
-              </div>
-            </div>
-
-            {/* Product Details */}
-            <div>
-              <div className="mb-6">
-                <p className="text-sm uppercase tracking-wider text-gray-500 mb-1">
-                  {product.category}
-                </p>
-                <h1 className="font-serif text-3xl font-bold text-luxe-navy mb-2">{product.name}</h1>
-                <p className="text-2xl font-semibold">
-                  {new Intl.NumberFormat("en-IN", {
-                    style: "currency",
-                    currency: "INR",
-                  }).format(product.price)}
-                </p>
-
-              </div>
-
-              {/* Product Description */}
-              <div className="mb-6">
-                <h3 className="font-serif text-xl font-semibold mb-2">Description</h3>
-                <p className="text-gray-700">{product.description}</p>
-              </div>
-
-              {/* Color Selection */}
-              {product.colors && (
-                <div className="mb-6">
-                  <h3 className="font-serif text-xl font-semibold mb-2">Color</h3>
-                  <div className="flex gap-3">
-                    {product.colors.map(color => (
-                      <button
-                        key={color}
-                        className={`p-4 border rounded-md ${selectedColor === color
-                            ? 'border-luxe-gold bg-gray-50'
-                            : 'border-gray-200 hover:border-gray-300'
-                          }`}
-                        onClick={() => setSelectedColor(color)}
-                      >
-                        {color}
-                      </button>
-                    ))}
-                  </div>
+        <div className="container mx-auto px-4 py-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Product Images */}
+                <div className="space-y-4">
+                    <img
+                        src={product.images[0]?.url || '/placeholder.png'}
+                        alt={product.name}
+                        className="w-full rounded-lg shadow-lg"
+                    />
+                    <div className="grid grid-cols-4 gap-2">
+                        {product.images.slice(1).map((image, index) => (
+                            <img
+                                key={index}
+                                src={image.url}
+                                alt={`${product.name} view ${index + 2}`}
+                                className="w-full rounded-md cursor-pointer hover:opacity-75"
+                            />
+                        ))}
+                    </div>
                 </div>
-              )}
 
-              {/* Quantity Selection */}
-              <div className="mb-8">
-                <h3 className="font-serif text-xl font-semibold mb-2">Quantity</h3>
-                <select
-                  value={quantity}
-                  onChange={handleQuantityChange}
-                  className="w-24 p-2 border border-gray-300 rounded-md"
-                >
-                  {[1, 2, 3, 4, 5].map((num) => (
-                    <option key={num} value={num}>{num}</option>
-                  ))}
-                </select>
-              </div>
+                {/* Product Info */}
+                <div className="space-y-6">
+                    <div>
+                        <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
+                        <p className="text-2xl font-bold text-primary">₹{product.price}</p>
+                    </div>
 
-              {/* Add to Cart Button */}
-              <Button
-                onClick={handleAddToCart}
-                className="w-full sm:w-auto px-8 py-6 bg-luxe-navy text-white hover:bg-luxe-navy/90 transition-colors"
-              >
-                <ShoppingBag className="mr-2 h-5 w-5" /> Add to Cart
-              </Button>
+                    <div>
+                        <h3 className="text-lg font-semibold mb-2">Description</h3>
+                        <p className="text-gray-600">{product.description}</p>
+                    </div>
+
+                    <div>
+                        <h3 className="text-lg font-semibold mb-2">Stock Status</h3>
+                        {product.stock > 0 ? (
+                            <p className="text-green-600">In Stock ({product.stock} available)</p>
+                        ) : (
+                            <p className="text-red-600">Out of Stock</p>
+                        )}
+                    </div>
+
+                    {product.stock > 0 && (
+                        <div className="space-y-4">
+                            <div className="flex items-center space-x-4">
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    onClick={() => handleQuantityChange(quantity - 1)}
+                                    disabled={quantity <= 1}
+                                >
+                                    -
+                                </Button>
+                                <span className="text-xl font-semibold">{quantity}</span>
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    onClick={() => handleQuantityChange(quantity + 1)}
+                                    disabled={quantity >= product.stock}
+                                >
+                                    +
+                                </Button>
+                            </div>
+                            <Button
+                                className="w-full"
+                                onClick={handleAddToCart}
+                            >
+                                Add to Cart
+                            </Button>
+                        </div>
+                    )}
+
+                    {/* Reviews Section */}
+                    <div className="mt-12">
+                        <h3 className="text-2xl font-bold mb-4">Reviews ({product.numOfReviews})</h3>
+                        <div className="space-y-4">
+                            {product.reviews.map((review, index) => (
+                                <Card key={index} className="p-4">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <h4 className="font-semibold">{review.name}</h4>
+                                        <div className="flex items-center">
+                                            <span className="text-yellow-400">★</span>
+                                            <span className="ml-1">{review.rating}</span>
+                                        </div>
+                                    </div>
+                                    <p className="text-gray-600">{review.comment}</p>
+                                </Card>
+                            ))}
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </main>
-      <Footer />
-    </div>
-  );
+    );
 };
 
 export default ProductDetail;

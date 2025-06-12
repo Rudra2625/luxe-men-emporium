@@ -6,8 +6,9 @@ import { useSelector } from 'react-redux'; // Redux
 import { selectCurrentUser } from '../redux/authSelector'; // Your selector
 
 const Navbar = () => {  
-  const { totalItems } = useCart();
+  const { getTotalItems } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const totalItems = getTotalItems();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -60,9 +61,9 @@ const Navbar = () => {
             </Link>
 
             {/* Conditional User Display */}
-            {user ? (
+            {user && user.name ? (
               <Link to="/dashboard" className="text-luxe-navy hover:text-luxe-gold font-medium">
-                {user.fullname.split(' ')[0]}
+                {user.name.split(' ')[0]}
               </Link>
             ) : (
               <>

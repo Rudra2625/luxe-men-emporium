@@ -1,10 +1,14 @@
 // components/redux/store.ts
 import { configureStore } from '@reduxjs/toolkit';
-import authReducer from './authslice'; // adjust the path if needed
+import authReducer from './authslice';
+import productReducer from './productSlice';
+import orderReducer from './orderSlice';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
+    products: productReducer,
+    orders: orderReducer,
   },
 });
 

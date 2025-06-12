@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
-import { ShoppingBag } from 'lucide-react';
+import { ShoppingBag } from 'lucide-react'
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Product } from '../../data/products';
@@ -16,12 +15,12 @@ const ProductCard = ({ product }: ProductCardProps) => {
   
   const handleAddToCart = () => {
     addToCart({
-      id: product.id,
+      id: product._id || product.id, // Handle both MongoDB _id and local id
       name: product.name,
       price: product.price,
-      image: product.image,
-      category: product.category,
-      color: product.colors ? product.colors[0] : undefined
+      image: product.image || (product.images && product.images[0]?.url) || '/placeholder.png',
+      quantity: 1,
+      stock: product.stock
     });
   };
   
@@ -29,9 +28,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
     <div className="product-card bg-white shadow-md rounded-md overflow-hidden">
       <div className="relative">
         {/* Product image */}
-        <Link to={`/product/${product.id}`}>
+        <Link to={`/product/${product._id || product.id}`}>
           <img 
-            src={product.image} 
+            src={product.image || (product.images && product.images[0]?.url) || '/placeholder.png'}
             alt={product.name} 
             className="w-full h-64 object-cover"
           />
@@ -56,14 +55,14 @@ const ProductCard = ({ product }: ProductCardProps) => {
         
         {/* Product name */}
         <Link 
-          to={`/product/${product.id}`}
+          to={`/product/${product._id || product.id}`}
           className="block mb-2 hover:text-luxe-gold transition-colors"
         >
           <h3 className="font-serif text-lg font-medium">{product.name}</h3>
         </Link>
         
         {/* Price */}
-        <p className="text-lg font-semibold mb-4">${product.price.toFixed(2)}</p>
+        <p className="text-lg font-semibold mb-4">₹{product.price.toFixed(2)}</p>
         
         {/* Add to cart button */}
         <Button 

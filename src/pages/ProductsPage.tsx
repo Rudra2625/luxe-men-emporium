@@ -1,119 +1,159 @@
-
-import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';        
+import { productAPI } from '../services/api';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/ui/use-toast';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import ProductCard from '@/components/ui/ProductCard';
+import { Product } from '../data/products';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
-import ProductCard from '../components/ui/ProductCard';
-import { products } from '../data/products';
-import { X } from 'lucide-react';
+
+// Backend Product type
+interface BackendProduct {
+    _id: string;
+    name: string;
+    price: number;
+    description: string;
+    images: Array<{ url: string }>;
+    category: 'Belts' | 'Perfumes';
+    stock: number;
+}
+
+// Category mapping
+const categoryMapping = {
+    'Belts': 'belt',
+    'Perfumes': 'perfume'
+} as const;
 
 const ProductsPage = () => {
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const categoryParam = queryParams.get('category');
-  
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(categoryParam);
-  const [filteredProducts, setFilteredProducts] = useState(products);
-  
-  // Filter products when category changes
-  useEffect(() => {
-    if (selectedCategory) {
-      setFilteredProducts(products.filter(product => product.category === selectedCategory));
-    } else {
-      setFilteredProducts(products);
-    }
-  }, [selectedCategory]);
-  
-  // Handle category change from URL parameter
-  useEffect(() => {
-    setSelectedCategory(categoryParam);
-  }, [categoryParam]);
-  
-  const handleCategoryChange = (category: string | null) => {
-    setSelectedCategory(category);
-  };
-  
-  return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      <main className="flex-grow">
-        {/* Header */}
-        <div className="bg-luxe-navy text-white py-12">
-          <div className="container mx-auto px-4 text-center">
-            <h1 className="font-serif text-3xl font-bold mb-2">Our Collection</h1>
-            <p className="text-gray-300">Discover premium quality men's accessories</p>
-          </div>
-        </div>
-        
-        {/* Products section */}
-        <section className="py-12">
-          <div className="container mx-auto px-4">
-            {/* Filtering options */}
-            <div className="mb-8">
-              <h2 className="font-serif text-xl font-semibold mb-4">Categories</h2>
-              <div className="flex flex-wrap gap-2">
-                <button 
-                  className={`px-4 py-2 rounded-full ${
-                    selectedCategory === null 
-                      ? 'bg-luxe-navy text-white' 
-                      : 'bg-gray-200 hover:bg-gray-300 text-gray-800'
-                  }`}
-                  onClick={() => handleCategoryChange(null)}
-                >
-                  All Products
-                </button>
-                {['perfume', 'wallet', 'belt', 'watch', 'glasses'].map((category) => (
-                  <button 
-                    key={category}
-                    className={`px-4 py-2 rounded-full ${
-                      selectedCategory === category 
-                        ? 'bg-luxe-navy text-white' 
-                        : 'bg-gray-200 hover:bg-gray-300 text-gray-800'
-                    }`}
-                    onClick={() => handleCategoryChange(category)}
-                  >
-                    {category.charAt(0).toUpperCase() + category.slice(1) + 's'}
-                  </button>
-                ))}
-              </div>
-              
-              {/* Active filters */}
-              {selectedCategory && (
-                <div className="mt-4 flex items-center">
-                  <span className="text-sm text-gray-500 mr-2">Active Filters:</span>
-                  <div className="bg-luxe-navy text-white text-sm px-3 py-1 rounded-full flex items-center">
-                    {selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1) + 's'}
-                    <button 
-                      onClick={() => handleCategoryChange(null)}
-                      className="ml-1 p-1"
-                    >
-                      <X size={14} />
-                    </button>
-                  </div>
+    const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [activeCategory, setActiveCategory] = useState<'all' | 'Belts' | 'Perfumes'>('all');
+    const { toast } = useToast();
+
+    useEffect(() => {
+        fetchProducts();
+    }, [activeCategory]);
+
+    const fetchProducts = async () => {
+        try {
+            let data;
+            if (activeCategory === 'all') {
+                data = await productAPI.getAllProducts();
+            } else {
+                data = await productAPI.getProductsByCategory(activeCategory);
+            }
+            
+            // Check if data and products array exist
+            if (!data || !data.products || !Array.isArray(data.products)) {
+                throw new Error('Invalid response format from server');
+            }
+            
+            const convertedProducts = data.products.map(convertToFrontendProduct);
+            setProducts(convertedProducts);
+            setError(null);
+        } catch (error: any) {
+            console.error('Error fetching products:', error);
+            setError(error.response?.data?.message || error.message || 'Failed to fetch products');
+            toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: 'Failed to fetch products. Please try again.',
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const convertToFrontendProduct = (backendProduct: BackendProduct): Product => ({
+        _id: backendProduct._id,
+        name: backendProduct.name,
+        price: backendProduct.price,
+        images: backendProduct.images,
+        category: backendProduct.category,
+        description: backendProduct.description,
+        stock: backendProduct.stock
+    });
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex flex-col">
+                <Navbar />
+                <div className="container mx-auto px-4 py-8 flex-grow">
+                    <div className="text-center">Loading products...</div>
                 </div>
-              )}
+                <Footer />
             </div>
-            
-            {/* Products grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredProducts.map(product => (
-                <ProductCard key={product.id} product={product} />
-              ))}
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="min-h-screen flex flex-col">
+                <Navbar />
+                <div className="container mx-auto px-4 py-8 flex-grow">
+                    <div className="text-center text-red-600">
+                        <p>{error}</p>
+                        <Button 
+                            onClick={fetchProducts}
+                            className="mt-4"
+                        >
+                            Try Again
+                        </Button>
+                    </div>
+                </div>
+                <Footer />
             </div>
-            
-            {/* Empty state */}
-            {filteredProducts.length === 0 && (
-              <div className="text-center py-12">
-                <h3 className="text-xl font-medium mb-2">No products found</h3>
-                <p className="text-gray-500">Try changing your search or filter criteria</p>
-              </div>
-            )}
-          </div>
-        </section>
-      </main>
-      <Footer />
-    </div>
-  );
+        );
+    }
+
+    return (
+        <div className="min-h-screen flex flex-col">
+            <Navbar />
+            <main className="flex-grow">
+                <div className="container mx-auto px-4 py-8">
+                    <h1 className="text-3xl font-bold text-center mb-8">Our Products</h1>
+                    
+                    <Tabs defaultValue={activeCategory} className="w-full mb-8">
+                        <TabsList className="grid w-full grid-cols-3 max-w-md mx-auto">
+                            <TabsTrigger 
+                                value="all"
+                                onClick={() => setActiveCategory('all')}
+                            >
+                                All
+                            </TabsTrigger>
+                            <TabsTrigger 
+                                value="Belts"
+                                onClick={() => setActiveCategory('Belts')}
+                            >
+                                Belts
+                            </TabsTrigger>
+                            <TabsTrigger 
+                                value="Perfumes"
+                                onClick={() => setActiveCategory('Perfumes')}
+                            >
+                                Perfumes
+                            </TabsTrigger>
+                        </TabsList>
+                    </Tabs>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        {products.map((product) => (
+                            <ProductCard key={product._id} product={product} />
+                        ))}
+                    </div>
+
+                    {products.length === 0 && (
+                        <div className="text-center text-gray-500 mt-8">
+                            No products found in this category.
+                        </div>
+                    )}
+                </div>
+            </main>
+            <Footer />
+        </div>
+    );
 };
 
 export default ProductsPage;
